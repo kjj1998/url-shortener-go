@@ -1,0 +1,1 @@
+swag init -g ./cmd/api-server/main.go -o docs
