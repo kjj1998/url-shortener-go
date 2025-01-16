@@ -1,20 +1,66 @@
 basePath: /api/v1
+definitions:
+  main.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  main.LongUrl:
+    properties:
+      longUrl:
+        type: string
+    type: object
+  main.ShortenedUrl:
+    properties:
+      id:
+        type: integer
+      longUrl:
+        type: string
+      shortUrl:
+        type: string
+    type: object
+host: localhost:8080
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a URL shortener service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: URL shortening API
+  version: "1.0"
 paths:
-  /example/helloworld:
-    get:
+  /data/shorten:
+    post:
       consumes:
       - application/json
-      description: do ping
+      description: generate shortened urls
+      parameters:
+      - description: Add URL for shortening
+        in: body
+        name: longUrl
+        required: true
+        schema:
+          $ref: '#/definitions/main.LongUrl'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            type: string
-      summary: ping example
+            $ref: '#/definitions/main.ShortenedUrl'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.HTTPError'
+      summary: generate shortened urls
       tags:
       - example
 swagger: "2.0"

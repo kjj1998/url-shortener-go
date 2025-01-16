@@ -9,15 +9,24 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/example/helloworld": {
-            "get": {
-                "description": "do ping",
+        "/data/shorten": {
+            "post": {
+                "description": "generate shortened urls",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,14 +36,68 @@ const docTemplate = `{
                 "tags": [
                     "example"
                 ],
-                "summary": "ping example",
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                "summary": "generate shortened urls",
+                "parameters": [
+                    {
+                        "description": "Add URL for shortening",
+                        "name": "longUrl",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/main.LongUrl"
                         }
                     }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/main.ShortenedUrl"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/main.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "status bad request"
+                }
+            }
+        },
+        "main.LongUrl": {
+            "type": "object",
+            "properties": {
+                "longUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.ShortenedUrl": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "longUrl": {
+                    "type": "string"
+                },
+                "shortUrl": {
+                    "type": "string"
                 }
             }
         }
@@ -43,12 +106,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "URL shortening API",
+	Description:      "This is a URL shortener service.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
