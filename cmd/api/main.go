@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/binary"
-	"errors"
 	"net/http"
+
+	"github.com/kjj1998/url-shortener-go/internal/model"
+	util "github.com/kjj1998/url-shortener-go/internal/util/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jxskiss/base62"
@@ -28,16 +30,6 @@ import (
 
 //	@host		localhost:8080
 //	@BasePath	/api/v1
-
-type ShortenedUrl struct {
-	ID       uint64 `json:"id"`
-	ShortUrl string `json:"shortUrl"`
-	LongUrl  string `json:"longUrl"`
-}
-
-type LongUrl struct {
-	LongUrl string `json:"longUrl"`
-}
 
 var sf *sonyflake.Sonyflake
 
@@ -72,31 +64,6 @@ func main() {
 	router.Run(":8080")
 }
 
-func NewError(ctx *gin.Context, status int, err error) {
-	er := HTTPError{
-		Code:    status,
-		Message: err.Error(),
-	}
-	ctx.JSON(status, er)
-}
-
-// HTTPError example
-type HTTPError struct {
-	Code    int    `json:"code" example:"400"`
-	Message string `json:"message" example:"status bad request"`
-}
-
-var ErrNameInvalid = errors.New("invalid parameter names in json body")
-
-func (l LongUrl) Validation() error {
-	switch {
-	case len(l.LongUrl) == 0:
-		return ErrNameInvalid
-	default:
-		return nil
-	}
-}
-
 // GenerateShortenedUrl godoc
 // @Summary generate shortened urls
 // @Schemes
@@ -109,14 +76,14 @@ func (l LongUrl) Validation() error {
 // @Failure 400 {object} HTTPError
 // @Router /data/shorten [post]
 func GenerateShortenedUrl(g *gin.Context) {
-	var longUrlForShortening LongUrl
+	var longUrlForShortening model.LongUrl
 	if err := g.ShouldBindJSON(&longUrlForShortening); err != nil {
-		NewError(g, http.StatusBadRequest, err)
+		util.NewError(g, http.StatusBadRequest, err)
 		return
 	}
 
 	if err := longUrlForShortening.Validation(); err != nil {
-		NewError(g, http.StatusBadRequest, err)
+		util.NewError(g, http.StatusBadRequest, err)
 		return
 	}
 
@@ -124,7 +91,7 @@ func GenerateShortenedUrl(g *gin.Context) {
 	id := generateUniqueId()
 	shortUrl := shortenUrl(id)
 
-	shortenedUrl := ShortenedUrl{
+	shortenedUrl := model.ShortenedUrl{
 		ID:       id,
 		ShortUrl: shortUrl,
 		LongUrl:  longUrl,
