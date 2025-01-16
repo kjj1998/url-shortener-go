@@ -44,7 +44,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.LongUrl"
+                            "$ref": "#/definitions/models.LongUrl"
                         }
                     }
                 ],
@@ -52,13 +52,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/main.ShortenedUrl"
+                            "$ref": "#/definitions/models.ShortenedUrl"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.HTTPError"
+                            "$ref": "#/definitions/utils.HTTPError"
                         }
                     }
                 }
@@ -66,20 +66,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.HTTPError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 400
-                },
-                "message": {
-                    "type": "string",
-                    "example": "status bad request"
-                }
-            }
-        },
-        "main.LongUrl": {
+        "models.LongUrl": {
             "type": "object",
             "properties": {
                 "longUrl": {
@@ -87,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "main.ShortenedUrl": {
+        "models.ShortenedUrl": {
             "type": "object",
             "properties": {
                 "id": {
@@ -98,6 +85,19 @@ const docTemplate = `{
                 },
                 "shortUrl": {
                     "type": "string"
+                }
+            }
+        },
+        "utils.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "status bad request"
                 }
             }
         }

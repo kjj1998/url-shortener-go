@@ -1,26 +1,26 @@
 basePath: /api/v1
 definitions:
-  main.HTTPError:
-    properties:
-      code:
-        example: 400
-        type: integer
-      message:
-        example: status bad request
-        type: string
-    type: object
-  main.LongUrl:
+  models.LongUrl:
     properties:
       longUrl:
         type: string
     type: object
-  main.ShortenedUrl:
+  models.ShortenedUrl:
     properties:
       id:
         type: integer
       longUrl:
         type: string
       shortUrl:
+        type: string
+    type: object
+  utils.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
         type: string
     type: object
 host: localhost:8080
@@ -48,18 +48,18 @@ paths:
         name: longUrl
         required: true
         schema:
-          $ref: '#/definitions/main.LongUrl'
+          $ref: '#/definitions/models.LongUrl'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/main.ShortenedUrl'
+            $ref: '#/definitions/models.ShortenedUrl'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/main.HTTPError'
+            $ref: '#/definitions/utils.HTTPError'
       summary: generate shortened urls
       tags:
       - example
