@@ -52,7 +52,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ShortenedUrl"
+                            "$ref": "#/definitions/models.Url"
                         }
                     },
                     "400": {
@@ -74,7 +74,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    ""
+                    "redirect"
                 ],
                 "summary": "redirect shortened urls to the actual urls",
                 "parameters": [
@@ -82,13 +82,24 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Short URL",
                         "name": "shortUrl",
-                        "in": "path",
-                        "required": true
+                        "in": "path"
                     }
                 ],
                 "responses": {
                     "307": {
                         "description": "Temporary Redirect"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
                     }
                 }
             }
@@ -103,7 +114,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ShortenedUrl": {
+        "models.Url": {
             "type": "object",
             "properties": {
                 "id": {

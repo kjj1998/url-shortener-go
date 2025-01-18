@@ -5,7 +5,7 @@ definitions:
       longUrl:
         type: string
     type: object
-  models.ShortenedUrl:
+  models.Url:
     properties:
       id:
         type: integer
@@ -46,16 +46,23 @@ paths:
       - description: Short URL
         in: path
         name: shortUrl
-        required: true
         type: string
       produces:
       - application/json
       responses:
         "307":
           description: Temporary Redirect
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
       summary: redirect shortened urls to the actual urls
       tags:
-      - ""
+      - redirect
   /data/shorten:
     post:
       consumes:
@@ -74,7 +81,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ShortenedUrl'
+            $ref: '#/definitions/models.Url'
         "400":
           description: Bad Request
           schema:

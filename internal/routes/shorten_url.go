@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param longUrl body models.LongUrl true	"Add URL for shortening"
-// @Success 201 {object} models.ShortenedUrl
+// @Success 201 {object} models.Url
 // @Failure 400 {object} utils.HTTPError
 // @Router /data/shorten [post]
 func GenerateShortenedUrl(g *gin.Context) {
@@ -55,15 +56,29 @@ func GenerateShortenedUrl(g *gin.Context) {
 // @Tags redirect
 // @Accept json
 // @Produce json
-// @Param shortUrl path string true	"Short URL"
+// @Param shortUrl path string false "Short URL"
 // @Success 307
+// @Failure 404 {object} utils.HTTPError
+// @Failure 500 {object} utils.HTTPError
 // @Router /{shortUrl} [get]
 func RedirectShortenedUrl(g *gin.Context) {
 	shortUrl := g.Param("shortUrl")
 
-	longUrl := "https://www.youtube.com"
-	shortenedUrlsToLongUrls := make(map[string]string)
-	shortenedUrlsToLongUrls[shortUrl] = longUrl
+	if shortUrl == "" {
+		g.IndentedJSON(http.StatusBadRequest, gin.H{"error": "shortUrl parameter is required"})
+		return
+	}
 
-	g.Redirect(http.StatusTemporaryRedirect, shortenedUrlsToLongUrls[shortUrl])
+	longUrl, err := repository.Client.RetrieveUrl(context.TODO(), shortUrl)
+
+	if err != nil {
+		utils.NewError(g, http.StatusInternalServerError, err)
+		return
+	}
+	if longUrl == "" {
+		utils.NewError(g, http.StatusNotFound, errors.New("URL not found"))
+		return
+	}
+
+	g.Redirect(http.StatusTemporaryRedirect, longUrl)
 }
