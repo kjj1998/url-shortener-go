@@ -63,6 +63,35 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/{shortUrl}": {
+            "get": {
+                "description": "redirect shortened urls to the actual urls",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "redirect shortened urls to the actual urls",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short URL",
+                        "name": "shortUrl",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "307": {
+                        "description": "Temporary Redirect"
+                    }
+                }
+            }
         }
     },
     "definitions": {

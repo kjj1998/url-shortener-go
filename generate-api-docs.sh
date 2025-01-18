@@ -1,1 +1,1 @@
-swag init -g ./cmd/api/main.go -o docs
+swag init -g ./main.go -o docs

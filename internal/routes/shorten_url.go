@@ -43,3 +43,23 @@ func GenerateShortenedUrl(g *gin.Context) {
 
 	g.IndentedJSON(http.StatusCreated, shortenedUrl)
 }
+
+// RedirectShortenedUrl godoc
+// @Summary redirect shortened urls to the actual urls
+// @Schemes
+// @Description redirect shortened urls to the actual urls
+// @Tags redirect
+// @Accept json
+// @Produce json
+// @Param shortUrl path string true	"Short URL"
+// @Success 307
+// @Router /{shortUrl} [get]
+func RedirectShortenedUrl(g *gin.Context) {
+	shortUrl := g.Param("shortUrl")
+
+	longUrl := "https://www.youtube.com"
+	shortenedUrlsToLongUrls := make(map[string]string)
+	shortenedUrlsToLongUrls[shortUrl] = longUrl
+
+	g.Redirect(http.StatusTemporaryRedirect, shortenedUrlsToLongUrls[shortUrl])
+}
