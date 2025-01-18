@@ -4,8 +4,8 @@ import "errors"
 
 var ErrNameInvalid = errors.New("invalid parameter names in json body")
 
-type ShortenedUrl struct {
-	ID       uint64 `json:"id"`
+type Url struct {
+	Id       uint64 `json:"id"`
 	ShortUrl string `json:"shortUrl"`
 	LongUrl  string `json:"longUrl"`
 }

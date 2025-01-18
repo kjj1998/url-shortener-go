@@ -1,10 +1,12 @@
 package routes
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kjj1998/url-shortener-go/internal/models"
+	"github.com/kjj1998/url-shortener-go/internal/repository"
 	"github.com/kjj1998/url-shortener-go/internal/utils"
 )
 
@@ -35,11 +37,13 @@ func GenerateShortenedUrl(g *gin.Context) {
 	id := utils.GenerateUniqueId()
 	shortUrl := utils.ShortenUrl(id)
 
-	shortenedUrl := models.ShortenedUrl{
-		ID:       id,
+	shortenedUrl := models.Url{
+		Id:       id,
 		ShortUrl: shortUrl,
 		LongUrl:  longUrl,
 	}
+
+	_ = repository.Client.AddUrl(context.TODO(), shortenedUrl)
 
 	g.IndentedJSON(http.StatusCreated, shortenedUrl)
 }
