@@ -13,8 +13,13 @@ import (
 	"github.com/kjj1998/url-shortener-go/internal/models"
 )
 
+type DynamoDbApi interface {
+	PutItem(ctx context.Context, params *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error)
+	Query(ctx context.Context, params *dynamodb.QueryInput, optFns ...func(*dynamodb.Options)) (*dynamodb.QueryOutput, error)
+}
+
 type TableClient struct {
-	DynamoDbClient *dynamodb.Client
+	DynamoDbClient DynamoDbApi
 	TableName      string
 }
 
@@ -34,27 +39,6 @@ func init() {
 		DynamoDbClient: dynamodb.NewFromConfig(cfg),
 		TableName:      constants.TableName,
 	}
-}
-
-// ListTables returns an array of Go strings containing the names of the DynamoDB tables
-// Returns an error when the names of the tables cannot be retrieved
-func (client TableClient) ListTables(ctx context.Context) ([]string, error) {
-	var tableNames []string
-	var output *dynamodb.ListTablesOutput
-	var err error
-
-	tablePaginator := dynamodb.NewListTablesPaginator(client.DynamoDbClient, &dynamodb.ListTablesInput{})
-	for tablePaginator.HasMorePages() {
-		output, err = tablePaginator.NextPage(ctx)
-		if err != nil {
-			log.Printf("Couldn't list tables. Here's why: %v\n", err)
-			break
-		} else {
-			tableNames = append(tableNames, output.TableNames...)
-		}
-	}
-
-	return tableNames, err
 }
 
 // AddUrl adds a URL and its shortened form as an entry into the DynamoDB table

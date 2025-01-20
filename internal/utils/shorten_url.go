@@ -17,13 +17,13 @@ func init() {
 	}
 }
 
-func GenerateUniqueId() uint64 {
+var GenerateUniqueId = func() uint64 {
 	id, _ := sf.NextID()
 
 	return id
 }
 
-func ShortenUrl(id uint64) string {
+var ShortenUrl = func(id uint64) string {
 	byteSlice := make([]byte, 8)
 	binary.BigEndian.PutUint64(byteSlice, id)
 	encoded := base62.EncodeToString(byteSlice)
