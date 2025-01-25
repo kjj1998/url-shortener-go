@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -32,7 +33,9 @@ func init() {
 	)
 
 	if err != nil {
-		log.Fatalf("unable to load SDK config, %v", err)
+		if env, exists := os.LookupEnv("ENVIRONMENT"); exists && env == "DEVELOPMENT" {
+			log.Fatalf("Development: unable to load SDK config, %v", err)
+		}
 	}
 
 	Client = TableClient{
