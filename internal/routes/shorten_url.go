@@ -21,6 +21,7 @@ import (
 // @Param longUrl body models.LongUrl true	"Add URL for shortening"
 // @Success 201 {object} models.Url
 // @Failure 400 {object} utils.HTTPError
+// @Failure	500 {object} utils.HTTPError
 // @Router /data/shorten [post]
 func GenerateShortenedUrl(g *gin.Context) {
 	var longUrlForShortening models.LongUrl
@@ -44,7 +45,12 @@ func GenerateShortenedUrl(g *gin.Context) {
 		LongUrl:  longUrl,
 	}
 
-	_ = repository.Client.AddUrl(context.TODO(), shortenedUrl)
+	err := repository.Client.AddUrl(context.TODO(), shortenedUrl)
+
+	if err != nil {
+		utils.NewError(g, http.StatusInternalServerError, errors.New(err.Error()))
+		return
+	}
 
 	g.IndentedJSON(http.StatusCreated, shortenedUrl)
 }

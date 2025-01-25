@@ -60,6 +60,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
                     }
                 }
             }
