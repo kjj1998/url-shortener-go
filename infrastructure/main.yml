@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: CloudFormation Template for deploying an ECR private repository
+
+Parameters:
+  RepositoryName:
+    Description: Name of the private ECR repository name
+    Type: String
+    Default: url-shortener-go-cf
+
+Resources:
+  PrivateEcrRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      EmptyOnDelete: True
+      EncryptionConfiguration:
+        EncryptionType: AES256
+      ImageScanningConfiguration:
+        ScanOnPush: True
+      ImageTagMutability: MUTABLE
+      RepositoryName: !Ref RepositoryName
