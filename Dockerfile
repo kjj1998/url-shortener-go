@@ -1,4 +1,4 @@
-FROM golang:1.23-bookworm AS base
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
@@ -10,11 +10,17 @@ RUN go mod download
 
 COPY . .
 
+RUN ./generate-api-docs.sh
+
 RUN go build -o url-shortener
+
+FROM alpine:3.21
+
+RUN apk --no-cache add ca-certificates
+
+COPY --from=builder /app/url-shortener /
 
 EXPOSE 8080
 
-RUN ./generate-api-docs.sh
-
-CMD ["./url-shortener"]
+CMD ["/url-shortener"]
 
