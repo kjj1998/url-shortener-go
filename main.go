@@ -30,7 +30,7 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:  []string{"http://localhost:8080"},
+		AllowOrigins:  []string{"http://localhost:80"},
 		AllowMethods:  []string{"GET"},
 		AllowHeaders:  []string{"Origin"},
 		ExposeHeaders: []string{"Content-Length"},
@@ -45,11 +45,12 @@ func main() {
 			shortenUrl.POST("/shorten", routes.GenerateShortenedUrl)
 		}
 		v1.GET("/:shortUrl", routes.RedirectShortenedUrl)
+		v1.GET("/health", routes.HealthCheck)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler,
-		ginSwagger.URL("http://localhost:8080/swagger/doc.json"),
+		ginSwagger.URL("http://localhost:80/swagger/doc.json"),
 		ginSwagger.DefaultModelsExpandDepth(-1)))
 
-	router.Run(":8080")
+	router.Run(":80")
 }

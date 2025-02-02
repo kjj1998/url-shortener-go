@@ -27,14 +27,32 @@ type TableClient struct {
 var Client TableClient
 
 func init() {
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithSharedConfigProfile(constants.AwsProfile),
-		config.WithRegion(constants.AwsRegion),
-	)
+	env, exists := os.LookupEnv("ENVIRONMENT")
+	var cfg aws.Config
+	var err error
+
+	if exists && env == "PRODUCTION" {
+		cfg, err = config.LoadDefaultConfig(context.TODO(),
+			config.WithRegion("ap-southeast-1"),
+			config.WithLogger(aws.NewConfig().Logger), // Logs AWS SDK activity
+			config.WithClientLogMode(aws.LogRetries|aws.LogRequest|aws.LogResponse),
+		)
+	} else if exists && env == "DEVELOPMENT" {
+		cfg, err = config.LoadDefaultConfig(context.TODO(),
+			config.WithSharedConfigProfile(constants.AwsProfile),
+			config.WithRegion(constants.AwsRegion),
+		)
+	} else if exists {
+		log.Fatalf("%v environment is not recognised", env)
+	} else {
+		log.Fatalf("No input for environment variable ENVIRONMENT detected")
+	}
 
 	if err != nil {
-		if env, exists := os.LookupEnv("ENVIRONMENT"); exists && env == "DEVELOPMENT" {
+		if env == "DEVELOPMENT" {
 			log.Fatalf("Development: unable to load SDK config, %v", err)
+		} else if env == "PRODUCTION" {
+			log.Fatalf("Production: unable to load SDK config, %v", err)
 		}
 	}
 

@@ -93,4 +93,13 @@ paths:
       summary: generate shortened urls
       tags:
       - example
+  /health:
+    get:
+      description: Check API health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: API healthcheck
 swagger: "2.0"

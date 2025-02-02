@@ -20,7 +20,7 @@ RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /app/url-shortener /
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["/url-shortener"]
 

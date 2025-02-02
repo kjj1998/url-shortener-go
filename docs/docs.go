@@ -70,6 +70,20 @@ const docTemplate = `{
                 }
             }
         },
+        "/health": {
+            "get": {
+                "description": "Check API health",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "API healthcheck",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/{shortUrl}": {
             "get": {
                 "description": "redirect shortened urls to the actual urls",
