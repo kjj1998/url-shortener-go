@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: CloudFormation Template for VPC with 2 public subnets, 2 private subnets and VPC endpoints
+
+Parameters:
+  Prefix:
+    Description: The prefix to be attached to the names of each resource
+    Type: String
+    Default: url-shortener-iac
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidrBlock
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: Name
+          Name: !Join
+            - '-'
+            - - !Ref Prefix
+              - vpc
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/20
+      AvailabilityZone: !Sub ${AWS::Region}a
+      Tags:
+        - Key: Name
+          Name: !Join
+            - '-'
+            - - !Ref Prefix
+              - subnet
+              - public1
+              - !Sub ${AWS::Region}a
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.16.0/20
+      AvailabilityZone: !Sub ${AWS::Region}b
+      Tags:
+        - Key: Name
+          Name: !Join
+            - '-'
+            - - !Ref Prefix
+              - subnet
+              - public2
+              - !Sub ${AWS::Region}b
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.128.0/20
+      AvailabilityZone: !Sub ${AWS::Region}a
+      Tags:
+        - Key: Name
+          Name: !Join
+            - '-'
+            - - !Ref Prefix
+              - subnet
+              - private1
+              - !Sub ${AWS::Region}a
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.144.0/20
+      AvailabilityZone: !Sub ${AWS::Region}b
+      Tags:
+        - Key: Name
+          Name: !Join
+            - '-'
+            - - !Ref Prefix
+              - subnet
+              - private2
+              - !Sub ${AWS::Region}b
